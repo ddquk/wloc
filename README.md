@@ -8,6 +8,19 @@
 
 本仓库为 [ddquk/wloc](https://github.com/ddquk/wloc)，选点网页与解析接口已部署到自己的 Cloudflare Worker `ddquk-wloc`，仍需手机真机验证。先使用 Cloudflare 分配的 `workers.dev` 地址即可，后续可绑定自己的域名。部署步骤见[部署说明](docs/DEPLOYMENT.md)。
 
+## 本仓库使用入口
+
+| 用途 | 地址 |
+| --- | --- |
+| 选点网页 | [https://ddquk-wloc.dddquk.workers.dev/](https://ddquk-wloc.dddquk.workers.dev/) |
+| Shadowrocket 模块 | [https://raw.githubusercontent.com/ddquk/wloc/refs/heads/main/modules/wloc.module](https://raw.githubusercontent.com/ddquk/wloc/refs/heads/main/modules/wloc.module) |
+| 设置位置快捷指令 | [安装「WLOC设置位置 ddquk」](https://www.icloud.com/shortcuts/e0cd9222aa114385809a312e5861c005) |
+| 恢复位置快捷指令 | [安装「WLOC恢复位置 ddquk」](https://www.icloud.com/shortcuts/7d10955e5e7e46edb9c6b628586edfeb) |
+| 快捷指令解析接口 | `https://ddquk-wloc.dddquk.workers.dev/api/parse` |
+| 手机迁移步骤 | [快捷指令配置与排障](docs/shortcut-guide.md) |
+
+模块和脚本均从 `ddquk/wloc` 下载。已经安装旧模块的用户，导入本仓库模块后停用旧模块，避免两套脚本同时执行；原来已经信任的客户端 MITM 证书可继续使用。
+
 > [!IMPORTANT]
 > ## ⚠️ iOS 27 正式版当前不支持
 >
@@ -54,11 +67,8 @@ flowchart TD
 → 安装 CA 描述文件
 → 在“证书信任设置”中开启完全信任
 → 确认代理 / VPN 正常连接
-→ 导入快捷指令模板或复制现有指令，将解析地址改为自己的 Worker
-→ 将修改后的指令重命名为「WLOC设置位置 ddquk」
-→ 在地图中选择目标位置
-→ 分享到「WLOC设置位置 ddquk」
-→ 快捷指令保存坐标并跳转到“定位服务”
+→ 打开本仓库选点网页，选择位置并点击“储存到设备”
+→ 进入“设置 → 隐私与安全性 → 定位服务”
 → 关闭定位服务
 → 开启飞行模式
 → 确认 Wi-Fi 和蓝牙同时关闭
@@ -68,6 +78,8 @@ flowchart TD
 → 最后重新开启定位服务
 → 打开地图验证
 ```
+
+也可以按第三节安装“WLOC设置位置 ddquk”，从地图分享菜单完成选点和保存，再按相同顺序刷新定位。新指令已配置本仓库解析接口，无需手动修改地址。
 
 ---
 
@@ -132,9 +144,15 @@ Shadowrocket
 → 配置 / 模块
 → 添加模块
 → URL
-→ 粘贴 wloc.module 地址
+→ 粘贴下方模块地址
 → 保存并启用
 ```
+
+```text
+https://raw.githubusercontent.com/ddquk/wloc/refs/heads/main/modules/wloc.module
+```
+
+若之前安装过其他来源的 WLOC 模块，请停用旧模块，只启用本仓库这一份。
 
 ### Surge
 
@@ -223,16 +241,27 @@ Certificate
 
 完成后返回代理客户端，确认 **WLOC 模块、MITM、代理 / VPN** 都处于启用状态。
 
-## 三、安装快捷指令
+## 三、安装本仓库快捷指令
 
 | 快捷指令 | 安装入口 | 用途 |
 | --- | --- | --- |
-| WLOC设置位置 xepes0 | [https://www.icloud.com/shortcuts/0a6465168d554135b78008a8b4bd7c01](https://www.icloud.com/shortcuts/0a6465168d554135b78008a8b4bd7c01) | 上游设置位置模板；导入后必须修改解析地址 |
-| wloc 清理恢复位置 | [https://www.icloud.com/shortcuts/f42632d406504f24a2cd163af4fe012f](https://www.icloud.com/shortcuts/f42632d406504f24a2cd163af4fe012f) | 清除已保存的虚拟坐标 |
+| WLOC设置位置 ddquk | [添加快捷指令](https://www.icloud.com/shortcuts/e0cd9222aa114385809a312e5861c005) | 接收地图分享内容，解析坐标并保存到设备 |
+| WLOC恢复位置 ddquk | [添加快捷指令](https://www.icloud.com/shortcuts/7d10955e5e7e46edb9c6b628586edfeb) | 清除设备中保存的虚拟坐标 |
 
-以上 iCloud 链接保留上游分享包，未替换为本仓库的服务。你可以导入“WLOC设置位置 xepes0”模板，也可以在「快捷指令」App 中复制已经正常使用的设置指令，保留原指令作为备份。
+**上面的设置位置指令已使用本仓库的解析接口，导入后无需修改服务地址。** 在 iPhone 上打开链接，点击“添加快捷指令”；之后从 Apple 地图或高德地图的系统分享菜单选择“WLOC设置位置 ddquk”。首次运行按系统提示允许所需权限。
 
-**使用前必须打开新指令的编辑界面，找到包含 `wloc.xepesw.workers.dev` 或 `wloc-spoofer.wloc.workers.dev` 的 URL / 文本动作，将解析服务替换为：**
+也可以使用第四节的选点网页完成选点、保存和清除。
+
+### 可选：保留现有指令并手工迁移
+
+如果希望保留手机上已有指令的自定义步骤，可以复制并修改旧指令：
+
+1. 在「快捷指令」App 中复制该指令，保留原指令作为备份。
+2. 编辑副本，找到包含 `/api/parse` 的 URL 或文本动作。
+3. 将解析服务的协议和域名替换为 `https://ddquk-wloc.dddquk.workers.dev`，保留路径、查询参数和输入变量。
+4. 将副本重命名为“WLOC设置位置 ddquk”，之后从地图分享菜单选择这个副本。
+
+解析接口的完整基础地址是：
 
 ```text
 https://ddquk-wloc.dddquk.workers.dev/api/parse
@@ -240,7 +269,7 @@ https://ddquk-wloc.dddquk.workers.dev/api/parse
 
 保留原有查询参数和输入变量；使用 JSON 词典读取的指令需保留 `format=json`。`https://gs-loc.apple.com/wloc-settings/save` 是手机本地拦截的保存入口，必须保留。
 
-修改后可将指令重命名为“WLOC设置位置 ddquk”，下文按此名称说明。新部署的 Worker 与修改后的指令仍需在手机上检查解析、保存和恢复；自托管不改变 iOS 兼容性。
+首次使用时，仍需在手机上检查解析、保存和恢复；自托管不改变 iOS 兼容性。
 
 已安装的快捷指令不会随 README、模块或 GitHub 仓库更新而自动修改解析地址。更多迁移说明见 [快捷指令迁移说明](docs/shortcut-guide.md#快捷指令)。
 
@@ -248,7 +277,7 @@ https://ddquk-wloc.dddquk.workers.dev/api/parse
 
 打开：
 
-**https://ddquk-wloc.dddquk.workers.dev/**
+[https://ddquk-wloc.dddquk.workers.dev/](https://ddquk-wloc.dddquk.workers.dev/)
 
 可以在地图上选点、搜索地点、输入经纬度或粘贴地图分享链接。
 
@@ -329,9 +358,9 @@ Apple 地图
 
 不要只复制地点名称。快捷指令需要地图分享产生的 URL / 文本，再交给解析接口转换成经纬度。
 
-## 七、快捷指令保存坐标后：必须按顺序刷新定位
+## 七、保存坐标后：必须按顺序刷新定位
 
-“WLOC设置位置 ddquk”保存坐标后，会跳转到：
+网页或“WLOC设置位置 ddquk”保存坐标后，进入以下设置；如果快捷指令已自动跳转，可直接继续：
 
 ```text
 设置
@@ -434,11 +463,9 @@ flowchart TD
 
 ## 九、恢复真实位置
 
-运行：
+安装并运行[WLOC恢复位置 ddquk](https://www.icloud.com/shortcuts/7d10955e5e7e46edb9c6b628586edfeb)。操作时保持代理连接、模块和 MITM 启用。
 
-**wloc 清理恢复位置**
-
-也可以通过网页清除已经保存的坐标。
+也可以打开[本仓库选点网页](https://ddquk-wloc.dddquk.workers.dev/)，在“当前生效坐标”卡片中点击“清除数据”。恢复指令和网页均请求本机拦截入口 `https://gs-loc.apple.com/wloc-settings/save?action=clear`，用于清除保存的虚拟坐标，不保证立即清除系统定位缓存。
 
 清除后建议：
 
@@ -482,7 +509,7 @@ latitude
 https://ddquk-wloc.dddquk.workers.dev/api/parse?format=json&u=...
 ```
 
-如果仍在使用旧快捷指令，请按上文修改解析服务地址，并保留 `format=json` 及输入变量。重新导入上游 iCloud 模板不会自动切换到自己的服务。
+如果仍在使用旧快捷指令，可安装第三节提供的本仓库指令；也可以手工迁移旧指令，保留 `format=json` 及输入变量。更新模块不会自动修改手机里的快捷指令。
 
 不要把：
 
@@ -492,11 +519,9 @@ https://gs-loc.apple.com/wloc-settings/save
 
 替换成 Worker 地址；这个 Apple 地址就是由本机 WLOC 模块拦截的保存路径。
 
-### 快捷指令分享链接提示“无法找到捷径”
+### 手机没有快捷指令，或以前的分享链接失效
 
-先重新打开 README 当前提供的 iCloud 模板链接，导入后仍需修改解析地址。如果 iCloud 分享服务暂时异常，可以复制手机里已有的指令，也可以直接使用网页选点：
-
-**https://ddquk-wloc.dddquk.workers.dev/**
+安装[WLOC设置位置 ddquk](https://www.icloud.com/shortcuts/e0cd9222aa114385809a312e5861c005)，新指令已配置本仓库解析地址。如果 iCloud 暂时无法打开，可直接使用[本仓库选点网页](https://ddquk-wloc.dddquk.workers.dev/)完成选点、保存和清除；也可以按第三节手工迁移手机上已有的指令。
 
 ### 网页显示保存成功，但地图位置不变
 
@@ -545,7 +570,7 @@ CA 是否已在“证书信任设置”开启完全信任：
 | --- | --- |
 | iOS 27 正式版无法使用 | 当前传统 WLOC 不支持 |
 | 快捷指令“网络连接已中断” | iOS 版本、MITM、CA 完全信任、VPN |
-| “获取词典值失败” | 是否使用最新快捷指令、解析接口是否返回 JSON |
+| “获取词典值失败” | 指令是否使用本仓库解析地址、接口是否返回 JSON |
 | 分享菜单没有 WLOC | 快捷指令是否安装、是否出现在系统分享菜单 |
 | 模块下载失败 | GitHub Raw 是否能访问 |
 | 网页打不开 | Worker / CDN / 当前网络 |
@@ -558,7 +583,7 @@ CA 是否已在“证书信任设置”开启完全信任：
 
 ## 部署
 
-推荐自行部署 Worker。进入本仓库的 `worker` 目录运行：
+本仓库实例已经部署，日常使用直接打开上方选点网页即可。维护者更新服务或其他用户部署自己的实例时，进入本仓库的 `worker` 目录运行：
 
 ```sh
 npm ci
@@ -569,7 +594,7 @@ npm run deploy
 
 本项目使用 Node.js 22 或更新版本；Wrangler 已固定到锁文件。部署不需要 KV 或数据库。Cloudflare Pages 配置也保留，见[部署说明](docs/DEPLOYMENT.md)。
 
-原作者的公共 Worker 和 Pages 不再作为默认选点服务；上方设置位置快捷指令已使用本仓库的新解析服务，自行部署时可按实际地址迁移。新维护者在 `project.config.json` 中填写仓库、发布分支及可选的选点站点，再运行：
+本教程使用 `ddquk/wloc` 的模块和 `ddquk-wloc.dddquk.workers.dev` 的解析服务；第三节发布的设置位置快捷指令已配置好该地址。旧指令不会自动更新，可重新安装本仓库指令或手工迁移。其他维护者部署自己的实例时，在 `project.config.json` 中填写仓库、发布分支及选点站点，再运行：
 
 ```sh
 npm run configure

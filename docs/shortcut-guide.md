@@ -4,37 +4,43 @@
 
 先阅读 README 的兼容性状态，再安装对应客户端模块，启用 MITM 并信任客户端证书。模块匹配的主机包括 `gs-loc.apple.com`、`gs-loc-cn.apple.com`、`gsp-ssl.ls.apple.com` 及两种上游高德备用主机。
 
-用 Safari 打开自己部署的选点网页，选点后点击「储存到设备」。网页查询的「当前生效坐标」是代理本地保存值，不是设备定位服务的独立测量结果。
+用 Safari 打开[本仓库选点网页](https://ddquk-wloc.dddquk.workers.dev/)，选点后点击「储存到设备」。网页查询的「当前生效坐标」是代理本地保存值，不是设备定位服务的独立测量结果。
 
 ## 从旧仓库迁移
 
-1. 订阅 [ddquk/wloc](https://github.com/ddquk/wloc) 对应模块，停用旧模块，避免重复脚本执行。
+1. Shadowrocket 导入[本仓库模块](https://raw.githubusercontent.com/ddquk/wloc/refs/heads/main/modules/wloc.module)，其他客户端使用[首页订阅表](../README.md#订阅地址)。停用旧模块，避免重复脚本执行。
 2. 保留客户端持久化键 `wloc_settings`；本分支没有改名。
 3. 原网页收藏在旧站点的 localStorage 中，换站点不会自动迁移。请先记录收藏，不要清除旧浏览器数据。
 4. 模块默认参数继续沿用上游值；自定义参数要手动核对。
 
 ## 快捷指令
 
-### 安装快捷指令
+### 安装本仓库快捷指令
 
-- [WLOC设置位置 xepes0](https://www.icloud.com/shortcuts/0a6465168d554135b78008a8b4bd7c01)
-- [wloc 清理恢复位置](https://www.icloud.com/shortcuts/f42632d406504f24a2cd163af4fe012f)
+| 快捷指令 | 安装入口 | 用途 |
+| --- | --- | --- |
+| WLOC设置位置 ddquk | [添加快捷指令](https://www.icloud.com/shortcuts/e0cd9222aa114385809a312e5861c005) | 接收地图分享内容，解析坐标并保存到设备 |
+| WLOC恢复位置 ddquk | [添加快捷指令](https://www.icloud.com/shortcuts/7d10955e5e7e46edb9c6b628586edfeb) | 清除设备中保存的虚拟坐标 |
 
-以上链接保留上游 iCloud 分享包及名称，设置位置模板内部仍可能使用上游解析服务。导入模板或复制手机上已正常使用的设置指令后，必须按下文修改解析地址；本仓库未发布已改好地址的新分享包。修改后可重命名为“WLOC设置位置 ddquk”。
+在 iPhone 上打开安装链接，点击“添加快捷指令”。**设置位置指令已配置 `https://ddquk-wloc.dddquk.workers.dev/api/parse`，导入后无需修改地址。** 在苹果地图选点 → 共享 → 选择“WLOC设置位置 ddquk”；高德地图通过「分享 → 更多」调用。首次运行按系统提示允许所需权限。
 
-在苹果地图选点 → 共享 → 选择“WLOC设置位置 ddquk”；高德地图通过「分享 → 更多」调用。新服务和修改后的指令仍需真机验证。恢复指令用于清除保存值，不保证立即清除系统定位缓存。
+需要恢复时，保持代理连接、模块和 MITM 启用，运行“WLOC恢复位置 ddquk”。它请求 `https://gs-loc.apple.com/wloc-settings/save?action=clear`，由设备上的代理脚本拦截处理。
+
+首次使用仍需在手机上验证解析、保存和恢复。也可以使用[选点网页](https://ddquk-wloc.dddquk.workers.dev/)完成选点、保存和清除；清除保存值不保证立即清除系统定位缓存。
 
 ### 替换旧解析服务
 
-本仓库的 Cloudflare Worker 名称为 `ddquk-wloc`，选点网页为 https://ddquk-wloc.dddquk.workers.dev/ ，解析接口为 `https://ddquk-wloc.dddquk.workers.dev/api/parse`。可以直接使用 Cloudflare 分配的 `workers.dev` 地址，后续再绑定自己的域名。更换域名时也需同步修改快捷指令。
+以下步骤仅用于保留现有指令的自定义内容，或迁移到另一个部署实例；新安装上方本仓库指令的用户无需执行。
 
-1. 按[部署说明](DEPLOYMENT.md)部署自己的 Worker，取得 HTTPS 地址。
+本仓库的 Cloudflare Worker 名称为 `ddquk-wloc`，选点网页为 [https://ddquk-wloc.dddquk.workers.dev/](https://ddquk-wloc.dddquk.workers.dev/)，解析接口为 `https://ddquk-wloc.dddquk.workers.dev/api/parse`。可以直接使用 Cloudflare 分配的 `workers.dev` 地址，后续再绑定自己的域名。更换域名时也需同步修改快捷指令。
+
+1. 本仓库实例已经部署，使用上面的 HTTPS 地址；只有另建实例时才需执行[部署说明](DEPLOYMENT.md)。
 2. 如果已经装过旧指令，先在「快捷指令」App 中复制一份备份，再打开设置指令的编辑界面。
-3. 查找包含 `wloc.xepesw.workers.dev` 或更早的 `wloc-spoofer.wloc.workers.dev` 的 URL / 文本动作，把该服务地址替换为自己的 Worker 地址，保留 `/api/parse` 路径、查询参数及输入变量。导入上方模板也必须完成这一步。
+3. 查找包含 `/api/parse` 的 URL / 文本动作，把协议和域名替换为 `https://ddquk-wloc.dddquk.workers.dev`，保留 `/api/parse` 路径、查询参数及输入变量。
 4. 保留 `https://gs-loc.apple.com/wloc-settings/save`。它是客户端拦截的设备保存路径，不是旧公共 Worker。
-5. 将修改后的指令重命名为“WLOC设置位置 ddquk”，用地图分享链接检查解析和保存结果，再运行恢复指令确认清理行为。
+5. 将修改后的指令重命名为“WLOC设置位置 ddquk”，用地图分享链接检查解析和保存结果，再运行本仓库的“WLOC恢复位置 ddquk”确认清理行为；也可以使用网页“当前生效坐标”卡片的“清除数据”。
 
-README 和模块中的新 GitHub 地址不会自动同步到已安装的快捷指令。如果 iCloud 分享失效，仍可使用自部署选点网页；本仓库未恢复可直接导入的 `.shortcut` 文件。
+README 和模块中的新 GitHub 地址不会自动同步到已安装的快捷指令。如果不需要保留原指令的自定义步骤，直接安装上方本仓库指令即可。
 
 解析接口：`GET https://ddquk-wloc.dddquk.workers.dev/api/parse?format=json&u=<URL编码的地图链接>`，成功返回 `lat`、`lon`、`name`。使用「获取词典值」的快捷指令必须保留 `format=json`，并对输入地图链接进行 URL 编码。站点根地址返回选点网页，不能代替解析接口。不带 `format=json` 时默认返回 `lat=...&lon=...` 纯文本，供旧快捷指令兼容使用。保存接口仍为 `https://gs-loc.apple.com/wloc-settings/save`，它由手机代理脚本拦截，不是 Worker 路由；不要将这个 Apple 地址替换为 Worker 域名。
 
