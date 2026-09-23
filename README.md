@@ -6,6 +6,8 @@
 
 本分支保留上游作者及贡献者记录，以 `529fcd8`（2026-09-04）为恢复基线。它不是原作者官方仓库，也不能修改 GPS 硬件定位。
 
+本仓库为 [ddquk/wloc](https://github.com/ddquk/wloc)，选点网页与解析接口已部署到自己的 Cloudflare Worker `ddquk-wloc`，仍需手机真机验证。先使用 Cloudflare 分配的 `workers.dev` 地址即可，后续可绑定自己的域名。部署步骤见[部署说明](docs/DEPLOYMENT.md)。
+
 > [!IMPORTANT]
 > ## ⚠️ iOS 27 正式版当前不支持
 >
@@ -52,8 +54,10 @@ flowchart TD
 → 安装 CA 描述文件
 → 在“证书信任设置”中开启完全信任
 → 确认代理 / VPN 正常连接
+→ 导入快捷指令模板或复制现有指令，将解析地址改为自己的 Worker
+→ 将修改后的指令重命名为「WLOC设置位置 ddquk」
 → 在地图中选择目标位置
-→ 分享到「WLOC设置位置 xepes0」
+→ 分享到「WLOC设置位置 ddquk」
 → 快捷指令保存坐标并跳转到“定位服务”
 → 关闭定位服务
 → 开启飞行模式
@@ -87,15 +91,15 @@ flowchart LR
 <!-- subscriptions:start -->
 | 客户端 | 订阅地址 |
 | --- | --- |
-| Surge / Egern | [https://raw.githubusercontent.com/xepes0/wloc/refs/heads/main/modules/wloc.sgmodule](https://raw.githubusercontent.com/xepes0/wloc/refs/heads/main/modules/wloc.sgmodule) |
-| Quantumult X | [https://raw.githubusercontent.com/xepes0/wloc/refs/heads/main/modules/wloc.conf](https://raw.githubusercontent.com/xepes0/wloc/refs/heads/main/modules/wloc.conf) |
-| Loon | [https://raw.githubusercontent.com/xepes0/wloc/refs/heads/main/modules/wloc.lpx](https://raw.githubusercontent.com/xepes0/wloc/refs/heads/main/modules/wloc.lpx) |
-| Stash | [https://raw.githubusercontent.com/xepes0/wloc/refs/heads/main/modules/wloc.stoverride](https://raw.githubusercontent.com/xepes0/wloc/refs/heads/main/modules/wloc.stoverride) |
-| Shadowrocket | [https://raw.githubusercontent.com/xepes0/wloc/refs/heads/main/modules/wloc.module](https://raw.githubusercontent.com/xepes0/wloc/refs/heads/main/modules/wloc.module) |
+| Surge / Egern | [https://raw.githubusercontent.com/ddquk/wloc/refs/heads/main/modules/wloc.sgmodule](https://raw.githubusercontent.com/ddquk/wloc/refs/heads/main/modules/wloc.sgmodule) |
+| Quantumult X | [https://raw.githubusercontent.com/ddquk/wloc/refs/heads/main/modules/wloc.conf](https://raw.githubusercontent.com/ddquk/wloc/refs/heads/main/modules/wloc.conf) |
+| Loon | [https://raw.githubusercontent.com/ddquk/wloc/refs/heads/main/modules/wloc.lpx](https://raw.githubusercontent.com/ddquk/wloc/refs/heads/main/modules/wloc.lpx) |
+| Stash | [https://raw.githubusercontent.com/ddquk/wloc/refs/heads/main/modules/wloc.stoverride](https://raw.githubusercontent.com/ddquk/wloc/refs/heads/main/modules/wloc.stoverride) |
+| Shadowrocket | [https://raw.githubusercontent.com/ddquk/wloc/refs/heads/main/modules/wloc.module](https://raw.githubusercontent.com/ddquk/wloc/refs/heads/main/modules/wloc.module) |
 
-选点页面：[https://wloc.xepesw.workers.dev/](https://wloc.xepesw.workers.dev/)。
+选点页面：[https://ddquk-wloc.dddquk.workers.dev/](https://ddquk-wloc.dddquk.workers.dev/)。
 
-[浏览源码](https://github.com/xepes0/wloc) · [部署到 Cloudflare Workers](https://deploy.workers.cloudflare.com/?url=https://github.com/xepes0/wloc/tree/main/worker)
+[浏览源码](https://github.com/ddquk/wloc) · [部署到 Cloudflare Workers](https://deploy.workers.cloudflare.com/?url=https://github.com/ddquk/wloc/tree/main/worker)
 <!-- subscriptions:end -->
 
 Egern 沿用上游 Surge 模块兼容说明，尚未单独复核。Stash 使用原生 `.stoverride`。
@@ -223,24 +227,28 @@ Certificate
 
 | 快捷指令 | 安装入口 | 用途 |
 | --- | --- | --- |
-| WLOC设置位置 xepes0 | [https://www.icloud.com/shortcuts/0a6465168d554135b78008a8b4bd7c01](https://www.icloud.com/shortcuts/0a6465168d554135b78008a8b4bd7c01) | 从地图分享位置，解析坐标并保存到代理客户端 |
+| WLOC设置位置 xepes0 | [https://www.icloud.com/shortcuts/0a6465168d554135b78008a8b4bd7c01](https://www.icloud.com/shortcuts/0a6465168d554135b78008a8b4bd7c01) | 上游设置位置模板；导入后必须修改解析地址 |
 | wloc 清理恢复位置 | [https://www.icloud.com/shortcuts/f42632d406504f24a2cd163af4fe012f](https://www.icloud.com/shortcuts/f42632d406504f24a2cd163af4fe012f) | 清除已保存的虚拟坐标 |
 
-“WLOC设置位置 xepes0”基于原作者版本，当前解析服务为：
+以上 iCloud 链接保留上游分享包，未替换为本仓库的服务。你可以导入“WLOC设置位置 xepes0”模板，也可以在「快捷指令」App 中复制已经正常使用的设置指令，保留原指令作为备份。
+
+**使用前必须打开新指令的编辑界面，找到包含 `wloc.xepesw.workers.dev` 或 `wloc-spoofer.wloc.workers.dev` 的 URL / 文本动作，将解析服务替换为：**
 
 ```text
-https://wloc.xepesw.workers.dev/api/parse
+https://ddquk-wloc.dddquk.workers.dev/api/parse
 ```
 
-维护者已对当前快捷指令的 `/api/parse?format=json` 解析链路进行过真机测试。**这只表示快捷指令解析链路可工作，不代表 iOS 27 正式版支持传统 WLOC。**
+保留原有查询参数和输入变量；使用 JSON 词典读取的指令需保留 `format=json`。`https://gs-loc.apple.com/wloc-settings/save` 是手机本地拦截的保存入口，必须保留。
 
-已安装的旧快捷指令不会自动更新；如果一直使用旧版本，可能出现“获取词典值失败”等错误。更多迁移说明见 [快捷指令迁移说明](docs/shortcut-guide.md#快捷指令)。
+修改后可将指令重命名为“WLOC设置位置 ddquk”，下文按此名称说明。新部署的 Worker 与修改后的指令仍需在手机上检查解析、保存和恢复；自托管不改变 iOS 兼容性。
+
+已安装的快捷指令不会随 README、模块或 GitHub 仓库更新而自动修改解析地址。更多迁移说明见 [快捷指令迁移说明](docs/shortcut-guide.md#快捷指令)。
 
 ## 四、方法 A：直接使用网页选点
 
 打开：
 
-**https://wloc.xepesw.workers.dev/**
+**https://ddquk-wloc.dddquk.workers.dev/**
 
 可以在地图上选点、搜索地点、输入经纬度或粘贴地图分享链接。
 
@@ -276,7 +284,7 @@ flowchart LR
 ### 3. 在系统分享菜单中选择
 
 ```text
-WLOC设置位置 xepes0
+WLOC设置位置 ddquk
 ```
 
 流程：
@@ -285,7 +293,7 @@ WLOC设置位置 xepes0
 flowchart LR
     A[Apple 地图] --> B[搜索 / 长按选点]
     B --> C[共享]
-    C --> D[WLOC设置位置 xepes0]
+    C --> D[WLOC设置位置 ddquk]
     D --> E[解析分享链接]
     E --> F[得到经纬度]
     F --> G[保存到 WLOC]
@@ -293,7 +301,7 @@ flowchart LR
 
 ### 分享菜单里没有 WLOC？
 
-先打开“快捷指令”App，手动运行一次“WLOC设置位置 xepes0”，完成系统要求的权限询问。
+先打开“快捷指令”App，手动运行一次“WLOC设置位置 ddquk”，完成系统要求的权限询问。
 
 然后重新：
 
@@ -304,7 +312,7 @@ Apple 地图
 → 更多
 ```
 
-检查“WLOC设置位置 xepes0”是否出现在系统分享菜单中。
+检查“WLOC设置位置 ddquk”是否出现在系统分享菜单中。
 
 ## 六、高德地图分享到快捷指令
 
@@ -316,14 +324,14 @@ Apple 地图
 → 分享
 → 更多
 → iOS 系统分享菜单
-→ WLOC设置位置 xepes0
+→ WLOC设置位置 ddquk
 ```
 
 不要只复制地点名称。快捷指令需要地图分享产生的 URL / 文本，再交给解析接口转换成经纬度。
 
 ## 七、快捷指令保存坐标后：必须按顺序刷新定位
 
-“WLOC设置位置 xepes0”保存坐标后，会跳转到：
+“WLOC设置位置 ddquk”保存坐标后，会跳转到：
 
 ```text
 设置
@@ -471,10 +479,10 @@ latitude
 当前解析接口使用：
 
 ```text
-https://wloc.xepesw.workers.dev/api/parse?format=json&u=...
+https://ddquk-wloc.dddquk.workers.dev/api/parse?format=json&u=...
 ```
 
-如果仍在使用旧快捷指令，请改用 README 当前提供的版本。
+如果仍在使用旧快捷指令，请按上文修改解析服务地址，并保留 `format=json` 及输入变量。重新导入上游 iCloud 模板不会自动切换到自己的服务。
 
 不要把：
 
@@ -486,9 +494,9 @@ https://gs-loc.apple.com/wloc-settings/save
 
 ### 快捷指令分享链接提示“无法找到捷径”
 
-先重新打开 README 当前提供的 iCloud 快捷指令链接。如果 iCloud 分享服务暂时异常，也可以直接使用网页选点：
+先重新打开 README 当前提供的 iCloud 模板链接，导入后仍需修改解析地址。如果 iCloud 分享服务暂时异常，可以复制手机里已有的指令，也可以直接使用网页选点：
 
-**https://wloc.xepesw.workers.dev/**
+**https://ddquk-wloc.dddquk.workers.dev/**
 
 ### 网页显示保存成功，但地图位置不变
 
@@ -641,4 +649,3 @@ npm run pages:build
 - 本项目按“原样”提供，不提供任何形式的担保。
 
 不要使用本项目欺骗服务、绕过规则、伪造生产环境定位数据，或在未经授权的设备和网络上使用。
-

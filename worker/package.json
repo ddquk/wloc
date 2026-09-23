@@ -10,7 +10,7 @@
     "pages:deploy": "wrangler pages deploy -c wrangler.pages.jsonc"
   },
   "dependencies": {
-    "hono": "4.13.0"
+    "hono": "4.13.8"
   },
   "name": "wloc-worker",
   "private": true,
